@@ -32,8 +32,11 @@ function Test:Run()
     local btMgrObj = UnityEngine.GameObject("BTManager")
     btMgrObj:AddComponent(typeof(BehaviorTest))
 
-    --bt1 = this:CreateBT1()
-    --bt1:EnabledBT()
+    bt = this:CreateBT()
+    bt:EnabledBT()
+
+    -- bt1 = this:CreateBT1()
+    -- bt1:EnabledBT()
 
     --bt2 = this:CreateBT2()
     --bt2:EnabledBT()
@@ -47,8 +50,28 @@ function Test:Run()
     --bt5 = this:CreateBT5()
     --bt5:EnabledBT()
 
-    local bt6 = this:CreateBT6()
-    bt6:EnabledBT()
+    -- local bt6 = this:CreateBT6()
+    -- bt6:EnabledBT()
+end
+
+function Test:CreateBT()
+    local btree = BT.BTree.New(nil, "bt4")
+    --1
+    local rep1001 = BT.Repeater:New("rep1001")
+    rep1001:SetExecutionCount(10)
+    btree:AddRoot(rep1001)
+
+    --2
+    local seq2001 = BT.Sequence:New("seq2001")
+    rep1001:AddChild(seq2001)
+    --3
+    local log3001 = BT.Log:New("log3001", "lua log")
+    seq2001:AddChild(log3001)
+
+    local wait3002 = BT.Wait:New("wait3002", 2)--等待时间有问题
+    seq2001:AddChild(wait3002)
+
+    return btree
 end
 
 function Test:CreateBT1()
@@ -59,21 +82,25 @@ function Test:CreateBT1()
     --2
     local seq2001 = BT.Sequence:New()
     seq2001:SetAbortType(BT.EAbortType.LowerPriority)
+    sel1001:AddChild(seq2001)
+
     local rep2001 = BT.Repeater:New()
     rep2001:SetExecutionCount(300)
-    sel1001:AddChild(seq2001)
     sel1001:AddChild(rep2001)
     --3
     local boolCom3001 = BT.BoolComparison:New("bool",true,false)
-    local log3001 = BT.Log:New(nil,"this is Log3001")
     seq2001:AddChild(boolCom3001)
+
+    local log3001 = BT.Log:New(nil,"this is Log3001")
     seq2001:AddChild(log3001)
+
     local seq3001 = BT.Sequence:New()
     rep2001:AddChild(seq3001)
     --4
     local log4001 = BT.Log:New(nil,"this is Log4001")
-    local wait4001 = BT.Wait:New(nil,0.01)
     seq3001:AddChild(log4001)
+    
+    local wait4001 = BT.Wait:New(nil,0.01)
     seq3001:AddChild(wait4001)
 
     return btree
