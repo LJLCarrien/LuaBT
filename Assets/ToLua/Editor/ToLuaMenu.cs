@@ -642,7 +642,7 @@ public static class ToLuaMenu
         sb.AppendLineEx("{");
         sb.AppendLineEx("\tpublic static void Bind(LuaState L)");
         sb.AppendLineEx("\t{");
-        sb.AppendLineEx("\t\tfloat t = Time.realtimeSinceStartup;");
+        //sb.AppendLineEx("\t\tfloat t = Time.realtimeSinceStartup;");
         sb.AppendLineEx("\t\tL.BeginModule(null);");
 
         GenRegisterInfo(null, sb, list, dtList);
@@ -685,7 +685,7 @@ public static class ToLuaMenu
             sb.AppendLineEx("\t\tL.EndPreLoad();");
         }
 
-        sb.AppendLineEx("\t\tDebugger.Log(\"Register lua type cost time: {0}\", Time.realtimeSinceStartup - t);");
+        //sb.AppendLineEx("\t\tDebugger.Log(\"Register lua type cost time: {0}\", Time.realtimeSinceStartup - t);");
         sb.AppendLineEx("\t}");
 
         for (int i = 0; i < dtList.Count; i++)
@@ -951,7 +951,7 @@ public static class ToLuaMenu
         AssetDatabase.Refresh();
     }
 
-    public static void CopyLuaBytesFiles(string sourceDir, string destDir, bool appendext = true, string searchPattern = "*.lua", SearchOption option = SearchOption.AllDirectories)
+    static void CopyLuaBytesFiles(string sourceDir, string destDir, bool appendext = true, string searchPattern = "*.lua", SearchOption option = SearchOption.AllDirectories)
     {
         if (!Directory.Exists(sourceDir))
         {
@@ -978,8 +978,28 @@ public static class ToLuaMenu
     }
 
 
-   
-    
+    [MenuItem("Lua/Copy Lua  files to Resources", false, 51)]
+    public static void CopyLuaFilesToRes()
+    {
+        ClearAllLuaFiles();
+        string destDir = Application.dataPath + "/Resources" + "/Lua";
+        CopyLuaBytesFiles(LuaConst.luaDir, destDir);
+        CopyLuaBytesFiles(LuaConst.toluaDir, destDir);
+        AssetDatabase.Refresh();
+        Debug.Log("Copy lua files over");
+    }
+
+    [MenuItem("Lua/Copy Lua  files to Persistent", false, 52)]
+    public static void CopyLuaFilesToPersistent()
+    {
+        ClearAllLuaFiles();
+        string destDir = Application.persistentDataPath + "/" + GetOS() + "/Lua";
+        CopyLuaBytesFiles(LuaConst.luaDir, destDir, false);
+        CopyLuaBytesFiles(LuaConst.toluaDir, destDir, false);
+        AssetDatabase.Refresh();
+        Debug.Log("Copy lua files over");
+    }
+
     static void GetAllDirs(string dir, List<string> list)
     {
         string[] dirs = Directory.GetDirectories(dir);
@@ -1025,7 +1045,7 @@ public static class ToLuaMenu
 #if UNITY_5_3_OR_NEWER        
         else if (EditorUserBuildSettings.activeBuildTarget == BuildTarget.iOS)
 #else
-        else if (EditorUserBuildSettings.activeBuildTarget == BuildTarget.iOS)
+        else if (EditorUserBuildSettings.activeBuildTarget == BuildTarget.iPhone)
 #endif        
         {
             //Debug.Log("iOS默认用64位，32位自行考虑");
@@ -1038,7 +1058,58 @@ public static class ToLuaMenu
 
     }
 
-    
+    [MenuItem("Lua/Build Lua files to Resources (PC)", false, 53)]
+    public static void BuildLuaToResources()
+    {
+        ClearAllLuaFiles();
+        string tempDir = CreateStreamDir("Lua");
+        string destDir = Application.dataPath + "/Resources" + "/Lua";        
+
+        string path = Application.dataPath.Replace('\\', '/');
+        path = path.Substring(0, path.LastIndexOf('/'));
+        CopyBuildBat(path, tempDir);
+        CopyLuaBytesFiles(LuaConst.luaDir, tempDir, false);
+        Process proc = Process.Start(tempDir + "/Build.bat");
+        proc.WaitForExit();
+        CopyLuaBytesFiles(tempDir + "/Out/", destDir, false, "*.lua.bytes");
+        CopyLuaBytesFiles(LuaConst.toluaDir, destDir);
+        
+        Directory.Delete(tempDir, true);        
+        AssetDatabase.Refresh();
+    }
+
+    [MenuItem("Lua/Build Lua files to Persistent (PC)", false, 54)]
+    public static void BuildLuaToPersistent()
+    {
+        ClearAllLuaFiles();
+        string tempDir = CreateStreamDir("Lua");        
+        string destDir = Application.persistentDataPath + "/" + GetOS() + "/Lua/";
+
+        string path = Application.dataPath.Replace('\\', '/');
+        path = path.Substring(0, path.LastIndexOf('/'));        
+        CopyBuildBat(path, tempDir);
+        CopyLuaBytesFiles(LuaConst.luaDir, tempDir, false);
+        Process proc = Process.Start(tempDir + "/Build.bat");
+        proc.WaitForExit();        
+        CopyLuaBytesFiles(LuaConst.toluaDir, destDir, false);
+
+        path = tempDir + "/Out/";
+        string[] files = Directory.GetFiles(path, "*.lua.bytes");
+        int len = path.Length;
+
+        for (int i = 0; i < files.Length; i++)
+        {
+            path = files[i].Remove(0, len);
+            path = path.Substring(0, path.Length - 6);
+            path = destDir + path;
+
+            File.Copy(files[i], path, true);
+        }
+
+        Directory.Delete(tempDir, true);
+        AssetDatabase.Refresh();
+    }
+
     [MenuItem("Lua/Build bundle files not jit", false, 55)]
     public static void BuildNotJitBundles()
     {
@@ -1055,7 +1126,7 @@ public static class ToLuaMenu
             Directory.CreateDirectory(tempDir);
         }        
 #endif
-
+        CopyLuaBytesFiles(LuaConst.luaDir, tempDir);
         CopyLuaBytesFiles(LuaConst.toluaDir, tempDir);
 
         AssetDatabase.Refresh();
@@ -1109,7 +1180,7 @@ public static class ToLuaMenu
         string path = Application.dataPath.Replace('\\', '/');
         path = path.Substring(0, path.LastIndexOf('/'));        
         CopyBuildBat(path, tempDir);
-
+        CopyLuaBytesFiles(LuaConst.luaDir, tempDir, false);
         Process proc = Process.Start(tempDir + "/Build.bat");
         proc.WaitForExit();
         CopyLuaBytesFiles(LuaConst.toluaDir, tempDir + "/Out");

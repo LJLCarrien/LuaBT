@@ -2,8 +2,8 @@
 
 public static class LuaConst
 {
+    public static string luaDir = Application.dataPath + "/BehaviorTree";                //lua逻辑代码目录
     public static string toluaDir = Application.dataPath + "/ToLua/Lua";        //tolua lua文件目录
-    public static string btDir = Application.dataPath + "/BehaviorTree";
 
 #if UNITY_STANDALONE
     public static string osDir = "Win";
@@ -24,7 +24,7 @@ public static class LuaConst
 #else
     public static string zbsDir = luaResDir + "/mobdebug/";
 #endif    
-
+    public static string btDir = Application.dataPath + "/BehaviorTree";
     public static bool openLuaSocket = true;            //是否打开Lua Socket库
     public static bool openLuaDebugger = false;         //是否连接lua调试器
 }

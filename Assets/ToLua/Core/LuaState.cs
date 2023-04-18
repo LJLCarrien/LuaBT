@@ -183,11 +183,11 @@ namespace LuaInterface
             if (!LuaFileUtils.Instance.beZip)
             {
 #if UNITY_EDITOR
-                //if (!Directory.Exists(LuaConst.luaDir))
-                //{
-                //    string msg = string.Format("luaDir path not exists: {0}, configer it in LuaConst.cs", LuaConst.luaDir);
-                //    throw new LuaException(msg);
-                //}
+                if (!Directory.Exists(LuaConst.luaDir))
+                {
+                    string msg = string.Format("luaDir path not exists: {0}, configer it in LuaConst.cs", LuaConst.luaDir);
+                    throw new LuaException(msg);
+                }
 
                 if (!Directory.Exists(LuaConst.toluaDir))
                 {
@@ -196,7 +196,7 @@ namespace LuaInterface
                 }
 
                 AddSearchPath(LuaConst.toluaDir);
-                //AddSearchPath(LuaConst.luaDir);
+                AddSearchPath(LuaConst.luaDir);
 #endif
                 if (LuaFileUtils.Instance.GetType() == typeof(LuaFileUtils))
                 {
@@ -1738,6 +1738,11 @@ namespace LuaInterface
             return 0;
         }
 
+        public void StepCollect()
+        {
+            translator.StepCollect();
+        }
+
         public void RefreshDelegateMap()
         {
             List<long> list = new List<long>();
@@ -2019,6 +2024,7 @@ namespace LuaInterface
             if (injectionState == this)
             {
                 injectionState = null;
+                LuaInjectionStation.Clear();
             }
 
 #if UNITY_EDITOR

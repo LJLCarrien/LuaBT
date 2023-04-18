@@ -43,6 +43,8 @@ namespace LuaInterface
         //同lua_ref策略，0作为一个回收链表头，不使用这个位置
         private PoolNode head = null;   
         private int count = 0;
+        private int collectStep = 2;
+        private int collectedIndex = -1;
 
         public LuaObjectPool()
         {
@@ -130,6 +132,31 @@ namespace LuaInterface
             return null;
         }
 
+        public void StepCollect(Action<object, int> collectListener)
+        {
+            ++collectedIndex;
+            for (int i = 0; i < collectStep; ++i)
+            {
+                collectedIndex += i;
+                if (collectedIndex >= count)
+                {
+                    collectedIndex = -1;
+                    return;
+                }
+
+                var node = list[collectedIndex];
+                object o = node.obj;
+                if (o != null && o.Equals(null))
+                {
+                    node.obj = null;
+                    if (collectListener != null)
+                    {
+                        collectListener(o, collectedIndex);
+                    }
+                }
+            }
+        }
+
         public object Replace(int pos, object o)
         {
             if (pos > 0 && pos < count)
@@ -141,5 +168,25 @@ namespace LuaInterface
 
             return null;
         }
+
+
+        //-----------------------
+        public int GetCount()
+        {
+            return this.count;
+        }
+
+
+        public int GetCollectedIndex()
+        {
+            return this.collectedIndex;
+        }
+
+
+        public int GetCollectStep()
+        {
+            return this.collectStep;
+        }
+        //-----------------------
     }
 }
