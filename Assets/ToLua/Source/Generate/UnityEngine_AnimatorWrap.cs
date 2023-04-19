@@ -108,7 +108,7 @@ public class UnityEngine_AnimatorWrap
 		L.RegVar("rightFeetBottomHeight", get_rightFeetBottomHeight, null);
 		L.RegVar("logWarnings", get_logWarnings, set_logWarnings);
 		L.RegVar("fireEvents", get_fireEvents, set_fireEvents);
-		L.RegVar("keepAnimatorStateOnDisable", get_keepAnimatorStateOnDisable, set_keepAnimatorStateOnDisable);
+		L.RegVar("keepAnimatorControllerStateOnDisable", get_keepAnimatorControllerStateOnDisable, set_keepAnimatorControllerStateOnDisable);
 		L.EndClass();
 	}
 
@@ -2481,7 +2481,7 @@ public class UnityEngine_AnimatorWrap
 	}
 
 	[MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-	static int get_keepAnimatorStateOnDisable(IntPtr L)
+	static int get_keepAnimatorControllerStateOnDisable(IntPtr L)
 	{
 		object o = null;
 
@@ -2489,13 +2489,13 @@ public class UnityEngine_AnimatorWrap
 		{
 			o = ToLua.ToObject(L, 1);
 			UnityEngine.Animator obj = (UnityEngine.Animator)o;
-			bool ret = obj.keepAnimatorStateOnDisable;
+			bool ret = obj.keepAnimatorControllerStateOnDisable;
 			LuaDLL.lua_pushboolean(L, ret);
 			return 1;
 		}
 		catch(Exception e)
 		{
-			return LuaDLL.toluaL_exception(L, e, o, "attempt to index keepAnimatorStateOnDisable on a nil value");
+			return LuaDLL.toluaL_exception(L, e, o, "attempt to index keepAnimatorControllerStateOnDisable on a nil value");
 		}
 	}
 
@@ -2842,7 +2842,7 @@ public class UnityEngine_AnimatorWrap
 	}
 
 	[MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-	static int set_keepAnimatorStateOnDisable(IntPtr L)
+	static int set_keepAnimatorControllerStateOnDisable(IntPtr L)
 	{
 		object o = null;
 
@@ -2851,12 +2851,12 @@ public class UnityEngine_AnimatorWrap
 			o = ToLua.ToObject(L, 1);
 			UnityEngine.Animator obj = (UnityEngine.Animator)o;
 			bool arg0 = LuaDLL.luaL_checkboolean(L, 2);
-			obj.keepAnimatorStateOnDisable = arg0;
+			obj.keepAnimatorControllerStateOnDisable = arg0;
 			return 0;
 		}
 		catch(Exception e)
 		{
-			return LuaDLL.toluaL_exception(L, e, o, "attempt to index keepAnimatorStateOnDisable on a nil value");
+			return LuaDLL.toluaL_exception(L, e, o, "attempt to index keepAnimatorControllerStateOnDisable on a nil value");
 		}
 	}
 }

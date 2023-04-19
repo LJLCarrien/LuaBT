@@ -56,7 +56,6 @@ public class UnityEngine_ShaderWrap
 		L.RegFunction("FindTextureStack", FindTextureStack);
 		L.RegFunction("__eq", op_Equality);
 		L.RegFunction("__tostring", ToLua.op_ToString);
-		L.RegVar("maximumChunksOverride", get_maximumChunksOverride, set_maximumChunksOverride);
 		L.RegVar("maximumLOD", get_maximumLOD, set_maximumLOD);
 		L.RegVar("globalMaximumLOD", get_globalMaximumLOD, set_globalMaximumLOD);
 		L.RegVar("isSupported", get_isSupported, null);
@@ -1434,20 +1433,6 @@ public class UnityEngine_ShaderWrap
 	}
 
 	[MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-	static int get_maximumChunksOverride(IntPtr L)
-	{
-		try
-		{
-			LuaDLL.lua_pushinteger(L, UnityEngine.Shader.maximumChunksOverride);
-			return 1;
-		}
-		catch (Exception e)
-		{
-			return LuaDLL.toluaL_exception(L, e);
-		}
-	}
-
-	[MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
 	static int get_maximumLOD(IntPtr L)
 	{
 		object o = null;
@@ -1614,21 +1599,6 @@ public class UnityEngine_ShaderWrap
 		catch(Exception e)
 		{
 			return LuaDLL.toluaL_exception(L, e, o, "attempt to index subshaderCount on a nil value");
-		}
-	}
-
-	[MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-	static int set_maximumChunksOverride(IntPtr L)
-	{
-		try
-		{
-			int arg0 = (int)LuaDLL.luaL_checknumber(L, 2);
-			UnityEngine.Shader.maximumChunksOverride = arg0;
-			return 0;
-		}
-		catch (Exception e)
-		{
-			return LuaDLL.toluaL_exception(L, e);
 		}
 	}
 
